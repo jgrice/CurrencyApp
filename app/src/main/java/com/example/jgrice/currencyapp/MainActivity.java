@@ -1,15 +1,20 @@
 package com.example.jgrice.currencyapp;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.NumberPicker;
+import android.widget.Spinner;
 
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.List;
 
 
 public class MainActivity extends ActionBarActivity {
@@ -29,7 +34,14 @@ public class MainActivity extends ActionBarActivity {
         } catch (SQLException e) {
             Log.e(DBHandler.class.getName(),"Unable to open database");
         }
+        //Currency Spinner
+        List<String> currencies = dbHandler.getAllCurrency();
+        Spinner currencySpinner = (Spinner) findViewById(R.id.CurrencySpinner);
+        ArrayAdapter<String> currencySpinnerAdapter = new ArrayAdapter<String>(this,
+                android.R.layout.simple_spinner_dropdown_item, currencies);
+        currencySpinner.setAdapter(currencySpinnerAdapter);
 
+        //Number Pickers
         NumberPicker startYearPicker = (NumberPicker) findViewById(R.id.StartYearNumberPicker);
         startYearPicker.setMinValue(1950);
         startYearPicker.setMaxValue(2015);
@@ -46,8 +58,15 @@ public class MainActivity extends ActionBarActivity {
         endMonthPicker.setMinValue(1);
         endMonthPicker.setMaxValue(12);
 
+        //Submit Button
         Button submitButton = (Button) findViewById(R.id.submitButton);
-        
+        submitButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, TableView.class);
+                startActivity(intent);
+            }
+        });
+
     }
 
     @Override
