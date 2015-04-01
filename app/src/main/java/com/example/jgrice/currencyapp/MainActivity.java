@@ -1,26 +1,54 @@
 package com.example.jgrice.currencyapp;
 
-import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.support.v7.app.ActionBarActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Button;
+import android.widget.NumberPicker;
+
+import java.io.IOException;
+import java.sql.SQLException;
 
 
 public class MainActivity extends ActionBarActivity {
-    private ExRateDataSource dataSource;
+    private DBHandler dbHandler;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        dataSource = new ExRateDataSource(this);
-        dataSource.open();
-        System.out.println("Test: " + dataSource.getAllExRates());
+        DBHandler dbHandler = new DBHandler(this);
+        try {
+            dbHandler.createDatabase();
+            dbHandler.openDatabase();
+        } catch (IOException e) {
+            Log.e(DBHandler.class.getName(),"Unable to create database");
+        } catch (SQLException e) {
+            Log.e(DBHandler.class.getName(),"Unable to open database");
+        }
 
-        dataSource.close();
+        NumberPicker startYearPicker = (NumberPicker) findViewById(R.id.StartYearNumberPicker);
+        startYearPicker.setMinValue(1950);
+        startYearPicker.setMaxValue(2015);
+
+        NumberPicker startMonthPicker = (NumberPicker) findViewById(R.id.StartMonthNumberPicker);
+        startMonthPicker.setMinValue(1);
+        startMonthPicker.setMaxValue(12);
+
+        NumberPicker endYearPicker = (NumberPicker) findViewById(R.id.EndYearNumberPicker);
+        endYearPicker.setMinValue(1950);
+        endYearPicker.setMaxValue(2015);
+
+        NumberPicker endMonthPicker = (NumberPicker) findViewById(R.id.EndMonthNumberPicker);
+        endMonthPicker.setMinValue(1);
+        endMonthPicker.setMaxValue(12);
+
+        Button submitButton = (Button) findViewById(R.id.submitButton);
+        
     }
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

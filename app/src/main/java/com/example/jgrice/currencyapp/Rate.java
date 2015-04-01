@@ -1,11 +1,25 @@
 package com.example.jgrice.currencyapp;
 
-public class ExRate {
-    public ExRate() {
+public class Rate {
+    private long id;
+    private String refDate;
+    private String currency;
+    private String vector;
+    private long value;
+
+    public Rate() {
         refDate = "1950/10";
         currency = "ZZZ";
         vector = "invalid";
         value = 1;
+    }
+
+    public Rate(long id, String refDate, String currency, String vector, long value) {
+        this.id = id;
+        this.refDate = refDate;
+        this.currency = currency;
+        this.vector = vector;
+        this.value = value;
     }
 
     public String getVector() {
@@ -18,7 +32,7 @@ public class ExRate {
 
     @Override
     public String toString() {
-        return "ExRate{" +
+        return "Rate{" +
                 "id=" + id +
                 ", refDate='" + refDate + '\'' +
                 ", currency='" + currency + '\'' +
@@ -51,14 +65,6 @@ public class ExRate {
         this.value = value;
     }
 
-    public ExRate(long id, String refDate, String currency, String vector, long value) {
-        this.id = id;
-        this.refDate = refDate;
-        this.currency = currency;
-        this.vector = vector;
-        this.value = value;
-    }
-
     public long getId() {
         return id;
     }
@@ -66,10 +72,4 @@ public class ExRate {
     public void setId(long id) {
         this.id = id;
     }
-
-    private long id;
-    private String refDate;
-    private String currency;
-    private String vector;
-    private long value;
 }
