@@ -16,12 +16,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class DBHandler extends SQLiteOpenHelper {
-    public static final String TABLE_CURRENCY = "rates";
-    public static final String COLUMN_ID = "_id";
-    public static final String COLUMN_REFDATE = "refdate";
-    public static final String COLUMN_CURRENCY = "currency";
-    public static final String COLUMN_VECTOR = "vector";
-    public static final String COLUMN_VALUE = "value";
+    private static final String TABLE_CURRENCY = "rates";
+    private static final String COLUMN_ID = "_id";
+    private static final String COLUMN_REFDATE = "refdate";
+    private static final String COLUMN_CURRENCY = "currency";
+    private static final String COLUMN_VECTOR = "vector";
+    private static final String COLUMN_VALUE = "value";
     private static final String DB_CREATE = "CREATE TABLE "
             + TABLE_CURRENCY + " ( " + COLUMN_ID
             + " INTEGER PRIMARY KEY AUTOINCREMENT, " + COLUMN_REFDATE
@@ -29,7 +29,7 @@ public class DBHandler extends SQLiteOpenHelper {
             + " TEXT NOT NULL, " + COLUMN_VECTOR
             + " INTEGER NOT NULL, "+ COLUMN_VALUE +
             " INTEGER NOT NULL )";
-    private String[] allColumns = { DBHandler.COLUMN_ID, DBHandler.COLUMN_REFDATE,
+    private final String[] allColumns = { DBHandler.COLUMN_ID, DBHandler.COLUMN_REFDATE,
             DBHandler.COLUMN_CURRENCY, DBHandler.COLUMN_VECTOR, DBHandler.COLUMN_VALUE };
     private static final int DATABASE_VERSION = 1;
     private static final String DATABASE_NAME = "ratedb";
@@ -68,7 +68,7 @@ public class DBHandler extends SQLiteOpenHelper {
         if (checkDB != null) {
             checkDB.close();
         }
-        return checkDB != null ? true : false;
+        return checkDB != null;
     }
 
     private void copyDatabase() throws IOException {
@@ -108,14 +108,31 @@ public class DBHandler extends SQLiteOpenHelper {
     }
 
     public List<Rate> getAllRates() {
-        List<Rate> rates = new ArrayList<Rate>();
+        List<Rate> rates = new ArrayList<>();
         Cursor cursor = db.query(DBHandler.TABLE_CURRENCY, allColumns,
                 null, null, null, null, null);
         cursor.moveToFirst();
         while (!cursor.isAfterLast()) {
             Rate rate = cursorToRate(cursor);
             rates.add(rate);
-            Log.d(DBHandler.class.getName(), rate.toString());
+            cursor.moveToNext();
+        }
+        cursor.close();
+        db.close();
+        return rates;
+    }
+    /**
+     * Query Database for Currency by country
+     * @return List of unique Currencies
+     */
+    public List<Rate> getAllRatesByCountry (String country) {
+        List<Rate> rates = new ArrayList<>();
+        Cursor cursor = db.query(DBHandler.TABLE_CURRENCY, allColumns,
+                DBHandler.COLUMN_CURRENCY + " = '" + country + "'", null, null, null, null);
+        cursor.moveToFirst();
+        while (!cursor.isAfterLast()) {
+            Rate rate = cursorToRate(cursor);
+            rates.add(rate);
             cursor.moveToNext();
         }
         cursor.close();
@@ -123,8 +140,27 @@ public class DBHandler extends SQLiteOpenHelper {
         return rates;
     }
 
-    public List<Rate> getAllRatesByCountry (String country) {
-        return null;
+    /**
+     * Query Database for Currency by country
+     * @return List of unique Currencies
+     */
+    public List<Rate> getAllRatesByCountryInRange (String country, int startYear, int startMonth, int endYear, int endMonth) {
+        List<Rate> rates = new ArrayList<>();
+        String whereSection = (DBHandler.COLUMN_CURRENCY + " = '" + country + "' AND " ) +
+                ("substr( " + DBHandler.COLUMN_REFDATE + ", 0, 5) BETWEEN '" + startYear + "' AND '" + endYear + "' AND ") +
+                ("substr( " + DBHandler.COLUMN_REFDATE + ", 6) BETWEEN '" + startMonth + "' AND '" + endMonth + "'");
+
+        Cursor cursor = db.query(DBHandler.TABLE_CURRENCY, allColumns,
+                whereSection, null, null, null, null);
+        cursor.moveToFirst();
+        while (!cursor.isAfterLast()) {
+            Rate rate = cursorToRate(cursor);
+            rates.add(rate);
+            cursor.moveToNext();
+        }
+        cursor.close();
+        db.close();
+        return rates;
     }
 
     /**
@@ -132,7 +168,7 @@ public class DBHandler extends SQLiteOpenHelper {
      * @return List of unique Currencies
      */
     public List<String> getAllCurrency() {
-        List<String> currency = new ArrayList<String>();
+        List<String> currency = new ArrayList<>();
         Cursor cursor = db.query(DBHandler.TABLE_CURRENCY, new String[] {DBHandler.COLUMN_CURRENCY},
                 null, null, DBHandler.COLUMN_CURRENCY, null, null);
         cursor.moveToFirst();
@@ -151,7 +187,7 @@ public class DBHandler extends SQLiteOpenHelper {
         rate.setRefDate(cursor.getString(1));
         rate.setCurrency(cursor.getString(2));
         rate.setVector(cursor.getString(3));
-        rate.setValue(cursor.getLong(4));
+        rate.setValue(cursor.getFloat(4));
         return rate;
     }
 

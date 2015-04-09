@@ -5,7 +5,7 @@ public class Rate {
     private String refDate;
     private String currency;
     private String vector;
-    private long value;
+    private float value;
 
     public Rate() {
         refDate = "1950/10";
@@ -14,7 +14,7 @@ public class Rate {
         value = 1;
     }
 
-    public Rate(long id, String refDate, String currency, String vector, long value) {
+    public Rate(long id, String refDate, String currency, String vector, float value) {
         this.id = id;
         this.refDate = refDate;
         this.currency = currency;
@@ -57,11 +57,11 @@ public class Rate {
         this.currency = currency;
     }
 
-    public long getValue() {
+    public float getValue() {
         return value;
     }
 
-    public void setValue(long value) {
+    public void setValue(float value) {
         this.value = value;
     }
 

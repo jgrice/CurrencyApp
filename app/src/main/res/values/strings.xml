@@ -3,6 +3,14 @@
 
     <string name="app_name"> Historical Exchange Rates</string>
     <string name="action_settings">Settings</string>
-    <string name="title_activity_table_view">TableView</string>
-
+    <string name="startingDate">Starting Date</string>
+    <string name="currency">Currency:</string>
+    <string name="endingDate">Ending Date</string>
+    <string name="date">Date</string>
+    <string name="vector">Vector</string>
+    <string name="rate">Rate</string>
+    <string name="year">Year</string>
+    <string name="month">Month</string>
+    <string name="noData">No Data Found</string>
+    <string name="go">GO</string>
 </resources>

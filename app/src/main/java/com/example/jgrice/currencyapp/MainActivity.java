@@ -36,25 +36,25 @@ public class MainActivity extends ActionBarActivity {
         }
         //Currency Spinner
         List<String> currencies = dbHandler.getAllCurrency();
-        Spinner currencySpinner = (Spinner) findViewById(R.id.CurrencySpinner);
-        ArrayAdapter<String> currencySpinnerAdapter = new ArrayAdapter<String>(this,
+        final Spinner currencySpinner = (Spinner) findViewById(R.id.CurrencySpinner);
+        ArrayAdapter<String> currencySpinnerAdapter = new ArrayAdapter<>(this,
                 android.R.layout.simple_spinner_dropdown_item, currencies);
         currencySpinner.setAdapter(currencySpinnerAdapter);
 
         //Number Pickers
-        NumberPicker startYearPicker = (NumberPicker) findViewById(R.id.StartYearNumberPicker);
+        final NumberPicker startYearPicker = (NumberPicker) findViewById(R.id.StartYearNumberPicker);
         startYearPicker.setMinValue(1950);
         startYearPicker.setMaxValue(2015);
 
-        NumberPicker startMonthPicker = (NumberPicker) findViewById(R.id.StartMonthNumberPicker);
+        final NumberPicker startMonthPicker = (NumberPicker) findViewById(R.id.StartMonthNumberPicker);
         startMonthPicker.setMinValue(1);
         startMonthPicker.setMaxValue(12);
 
-        NumberPicker endYearPicker = (NumberPicker) findViewById(R.id.EndYearNumberPicker);
+        final NumberPicker endYearPicker = (NumberPicker) findViewById(R.id.EndYearNumberPicker);
         endYearPicker.setMinValue(1950);
         endYearPicker.setMaxValue(2015);
 
-        NumberPicker endMonthPicker = (NumberPicker) findViewById(R.id.EndMonthNumberPicker);
+        final NumberPicker endMonthPicker = (NumberPicker) findViewById(R.id.EndMonthNumberPicker);
         endMonthPicker.setMinValue(1);
         endMonthPicker.setMaxValue(12);
 
@@ -63,6 +63,12 @@ public class MainActivity extends ActionBarActivity {
         submitButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 Intent intent = new Intent(MainActivity.this, TableView.class);
+                intent.putExtra("currency", currencySpinner.getSelectedItem().toString());
+                intent.putExtra("startYear", startYearPicker.getValue());
+                intent.putExtra("startMonth", startMonthPicker.getValue());
+                intent.putExtra("endYear", endYearPicker.getValue());
+                intent.putExtra("endMonth", endMonthPicker.getValue());
+
                 startActivity(intent);
             }
         });
