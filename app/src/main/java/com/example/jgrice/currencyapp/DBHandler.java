@@ -143,7 +143,7 @@ public class DBHandler extends SQLiteOpenHelper {
     /**
      * Query Database for Currency by country
      * @return List of unique Currencies
-     */
+     *//*
     public List<Rate> getAllRatesByCountryInRange (String country, int startYear, int startMonth, int endYear, int endMonth) {
         List<Rate> rates = new ArrayList<>();
         String whereSection = (DBHandler.COLUMN_CURRENCY + " = '" + country + "' AND " ) +
@@ -161,7 +161,7 @@ public class DBHandler extends SQLiteOpenHelper {
         cursor.close();
         db.close();
         return rates;
-    }
+    }*/
 
     /**
      * Query Database for unique Currencies
@@ -184,7 +184,7 @@ public class DBHandler extends SQLiteOpenHelper {
     private Rate cursorToRate(Cursor cursor) {
         Rate rate = new Rate();
         rate.setId(cursor.getLong(0));
-        rate.setRefDate(cursor.getString(1));
+        rate.setDateString(cursor.getString(1));
         rate.setCurrency(cursor.getString(2));
         rate.setVector(cursor.getString(3));
         rate.setValue(cursor.getFloat(4));

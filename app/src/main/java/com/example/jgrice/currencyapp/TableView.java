@@ -12,6 +12,10 @@ import android.widget.TableRow;
 import android.widget.TextView;
 
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
 
 
@@ -24,32 +28,36 @@ public class TableView extends ActionBarActivity {
         setContentView(R.layout.activity_table_view);
         Intent intent = getIntent();
         String currency = intent.getStringExtra("currency");
-        int startYear = intent.getIntExtra("startYear", 0);
-        int startMonth = intent.getIntExtra("startMonth", 0);
-        int endYear = intent.getIntExtra("endYear", 0);
-        int endMonth = intent.getIntExtra("endMonth", 0);
+        Date startDate = new Date(intent.getLongExtra("startDate", 0));
+        Date endDate = new Date(intent.getLongExtra("endDate", 0));
+
         List<Rate> rates = null;
         DBHandler dbHandler = new DBHandler(this);
         try {
             dbHandler.openDatabase();
-            rates = dbHandler.getAllRatesByCountryInRange(currency, startYear, startMonth, endYear, endMonth);
+            rates = dbHandler.getAllRatesByCountry(currency);
             dbHandler.close();
         } catch (SQLException e) {
             Log.e(DBHandler.class.getName(), "Unable to open database");
         }
-        //curencyTextView
+
         TextView currencyTextView = (TextView) findViewById(R.id.currencyTextView);
         currencyTextView.setText("Canadian to " + currency);
 
         TableLayout currencyTable = (TableLayout) findViewById(R.id.currencyTableLayout);
-        if (rates != null && !rates.isEmpty()) {
-            TableRow noDataTableRow = (TableRow) findViewById(R.id.noDataTableRow);
-            noDataTableRow.setVisibility(View.INVISIBLE);
-            for (Rate rate : rates) {
+        Collections.sort(rates, new Comparator<Rate>() {
+            @Override
+            public int compare(Rate lhs, Rate rhs) {
+                return (rhs.getRefDate().before(lhs.getRefDate())) ? 1 : -1 ;
+            }
+        });
+        for (Rate rate : rates) {
+            if (rate.getRefDate().after(startDate) && rate.getRefDate().before(endDate)) {
                 TableRow tableRow = new TableRow(this);
 
                 TextView labelDate = new TextView(this);
-                labelDate.setText(rate.getRefDate());
+                String date = new SimpleDateFormat("yyyy-MM").format(rate.getRefDate());
+                labelDate.setText(date);
                 tableRow.addView(labelDate);
 
                 TextView labelVector = new TextView(this);
@@ -62,6 +70,10 @@ public class TableView extends ActionBarActivity {
 
                 currencyTable.addView(tableRow);
             }
+        }
+        if (currencyTable.getChildCount() != 1) {
+            TableRow noDataTableRow = (TableRow) findViewById(R.id.noDataTableRow);
+            noDataTableRow.setVisibility(View.INVISIBLE);
         }
     }
 

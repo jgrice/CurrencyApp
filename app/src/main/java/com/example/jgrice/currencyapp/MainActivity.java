@@ -14,6 +14,7 @@ import android.widget.Spinner;
 
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.Date;
 import java.util.List;
 
 
@@ -64,11 +65,12 @@ public class MainActivity extends ActionBarActivity {
             public void onClick(View v) {
                 Intent intent = new Intent(MainActivity.this, TableView.class);
                 intent.putExtra("currency", currencySpinner.getSelectedItem().toString());
-                intent.putExtra("startYear", startYearPicker.getValue());
-                intent.putExtra("startMonth", startMonthPicker.getValue());
-                intent.putExtra("endYear", endYearPicker.getValue());
-                intent.putExtra("endMonth", endMonthPicker.getValue());
+;
+                Date startDate = new Date(startYearPicker.getValue()-1900, startMonthPicker.getValue(), 0);
+                intent.putExtra("startDate", startDate.getTime());
 
+                Date endDate = new Date(endYearPicker.getValue()-1900, endMonthPicker.getValue(), 0);
+                intent.putExtra("endDate", endDate.getTime());
                 startActivity(intent);
             }
         });

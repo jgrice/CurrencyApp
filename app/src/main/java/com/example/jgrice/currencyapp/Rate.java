@@ -1,25 +1,32 @@
 package com.example.jgrice.currencyapp;
 
+import java.util.Date;
+
 public class Rate {
     private long id;
-    private String refDate;
+    private Date refDate;
     private String currency;
     private String vector;
     private float value;
 
     public Rate() {
-        refDate = "1950/10";
+        refDate = new Date();
         currency = "ZZZ";
         vector = "invalid";
         value = 1;
     }
 
-    public Rate(long id, String refDate, String currency, String vector, float value) {
+    public Rate(long id, Date refDate, String currency, String vector, float value) {
         this.id = id;
+        this.refDate = refDate;
         this.refDate = refDate;
         this.currency = currency;
         this.vector = vector;
         this.value = value;
+    }
+
+    public void setDateString(String refDate) {
+        this.refDate = new Date(Integer.valueOf(refDate.substring(0, 4))-1900,Integer.valueOf(refDate.substring(5, 7)), 0);
     }
 
     public String getVector() {
@@ -41,11 +48,11 @@ public class Rate {
                 '}';
     }
 
-    public String getRefDate() {
+    public Date getRefDate() {
         return refDate;
     }
 
-    public void setRefDate(String refDate) {
+    public void setRefDate(Date refDate) {
         this.refDate = refDate;
     }
 
