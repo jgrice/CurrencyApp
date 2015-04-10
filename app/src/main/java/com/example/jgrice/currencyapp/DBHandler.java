@@ -107,6 +107,21 @@ public class DBHandler extends SQLiteOpenHelper {
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
     }
 
+    public List<String> getAllVectorsByCurrency(String currency) {
+        List<String> vectors = new ArrayList<>();
+        Cursor cursor = db.query(true, DBHandler.TABLE_CURRENCY, new String[] {DBHandler.COLUMN_VECTOR},
+                DBHandler.COLUMN_CURRENCY + " = '" + currency + "'", null, null, null, null, null);
+
+        cursor.moveToFirst();
+        while (!cursor.isAfterLast()) {
+            vectors.add(cursor.getString(0));
+            cursor.moveToNext();
+        }
+        cursor.close();
+        return vectors;
+    }
+
+
     public List<Rate> getAllRates() {
         List<Rate> rates = new ArrayList<>();
         Cursor cursor = db.query(DBHandler.TABLE_CURRENCY, allColumns,
@@ -118,7 +133,6 @@ public class DBHandler extends SQLiteOpenHelper {
             cursor.moveToNext();
         }
         cursor.close();
-        db.close();
         return rates;
     }
     /**
@@ -136,7 +150,6 @@ public class DBHandler extends SQLiteOpenHelper {
             cursor.moveToNext();
         }
         cursor.close();
-        db.close();
         return rates;
     }
 
@@ -177,7 +190,6 @@ public class DBHandler extends SQLiteOpenHelper {
             cursor.moveToNext();
         }
         cursor.close();
-        db.close();
         return currency;
     }
 

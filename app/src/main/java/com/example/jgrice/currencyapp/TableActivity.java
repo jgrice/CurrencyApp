@@ -7,6 +7,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
@@ -19,7 +20,7 @@ import java.util.Date;
 import java.util.List;
 
 
-public class TableView extends ActionBarActivity {
+public class TableActivity extends ActionBarActivity {
     private DBHandler dbHandler;
 
     @Override
@@ -27,16 +28,15 @@ public class TableView extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_table_view);
         Intent intent = getIntent();
-        String currency = intent.getStringExtra("currency");
-        Date startDate = new Date(intent.getLongExtra("startDate", 0));
-        Date endDate = new Date(intent.getLongExtra("endDate", 0));
+        final String currency = intent.getStringExtra("currency");
+        final Date startDate = new Date(intent.getLongExtra("startDate", 0));
+        final Date endDate = new Date(intent.getLongExtra("endDate", 0));
 
         List<Rate> rates = null;
         DBHandler dbHandler = new DBHandler(this);
         try {
             dbHandler.openDatabase();
             rates = dbHandler.getAllRatesByCountry(currency);
-            dbHandler.close();
         } catch (SQLException e) {
             Log.e(DBHandler.class.getName(), "Unable to open database");
         }
@@ -51,6 +51,7 @@ public class TableView extends ActionBarActivity {
                 return (rhs.getRefDate().before(lhs.getRefDate())) ? 1 : -1 ;
             }
         });
+
         for (Rate rate : rates) {
             if (rate.getRefDate().after(startDate) && rate.getRefDate().before(endDate)) {
                 TableRow tableRow = new TableRow(this);
@@ -71,11 +72,24 @@ public class TableView extends ActionBarActivity {
                 currencyTable.addView(tableRow);
             }
         }
-        if (currencyTable.getChildCount() != 1) {
+        if (currencyTable.getChildCount() != 2) {
             TableRow noDataTableRow = (TableRow) findViewById(R.id.noDataTableRow);
             noDataTableRow.setVisibility(View.INVISIBLE);
         }
+
+        Button viewGraph = (Button) findViewById(R.id.viewGraphButton);
+        viewGraph.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                Intent intent = new Intent(TableActivity.this, GraphActivity.class);
+                intent.putExtra("currency", currency);
+                intent.putExtra("startDate", startDate.getTime());
+
+                intent.putExtra("endDate", endDate.getTime());
+                startActivity(intent);
+            }
+        });
     }
+
 
 
     @Override
@@ -92,10 +106,15 @@ public class TableView extends ActionBarActivity {
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
+        if (id == R.id.action_help) {
+            Intent intent = new Intent(TableActivity.this, HelpActivity.class);
+            startActivity(intent);
         }
+        if (id == R.id.action_home) {
+            Intent intent = new Intent(TableActivity.this, MainActivity.class);
+            startActivity(intent);
+        }
+
 
         return super.onOptionsItemSelected(item);
     }

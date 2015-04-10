@@ -11,6 +11,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.NumberPicker;
 import android.widget.Spinner;
+import android.widget.Toast;
 
 import java.io.IOException;
 import java.sql.SQLException;
@@ -63,9 +64,11 @@ public class MainActivity extends ActionBarActivity {
         Button submitButton = (Button) findViewById(R.id.submitButton);
         submitButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this, TableView.class);
+
+                Toast toast = Toast.makeText(getApplicationContext(), "Warning: Large date ranges may reduce result speed!", Toast.LENGTH_LONG);
+                toast.show();
+                Intent intent = new Intent(MainActivity.this, TableActivity.class);
                 intent.putExtra("currency", currencySpinner.getSelectedItem().toString());
-;
                 Date startDate = new Date(startYearPicker.getValue()-1900, startMonthPicker.getValue(), 0);
                 intent.putExtra("startDate", startDate.getTime());
 
@@ -92,8 +95,13 @@ public class MainActivity extends ActionBarActivity {
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
+        if (id == R.id.action_help) {
+            Intent intent = new Intent(MainActivity.this, HelpActivity.class);
+            startActivity(intent);
+        }
+        if (id == R.id.action_home) {
+            Intent intent = new Intent(MainActivity.this, MainActivity.class);
+            startActivity(intent);
         }
 
         return super.onOptionsItemSelected(item);
